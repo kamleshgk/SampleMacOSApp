@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+.skills {
+  text-align: right;
+  padding: 10px;
+  color: white;
+}
+
+.eVerito {background-color: #4CAF50;}
+.petrolSedan {background-color: #808080;}
+
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px; 
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.chart {
+  width: 100%; 
+  min-height: 300px;
+}
+
+.row {
+  margin:0 !important;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+</style>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body onresize="myFunction()">
+
+<h2>Mahindra eVerito vs Petrol Sedan</h2>
+
+<div class="slidecontainer" style="align-content: center">
+    <p><b>Annual Driving : </b><span id="annualkm">15,000 km</span><input type="range" step="100" min="1000" max="25000" value="15000" class="slider" id="myRange"></p>
+    <p><b>Electricity/Unit ₹ </b><input style="text-align:center;" type="number" value="6" id="electricity"></span></p>
+    <p><b>Petrol/Liter ₹ </b><input style="text-align:center;" type="number" value="75" id="petrol"></span></p>
+</div>
+<h3><span id="savingsStatement"></span></h3>
+<br/>
+<div id="chart_div" class="chart"></div>
+
+<br/><br/>
+<b>Calculation Details</b><br/><br/>
+<div style="font-family: verdana; font-size:11pt;">
+<table>
+    <tr>
+      <th>Costs</th> 
+      <th>Mahindra eVerito</th>
+      <th>Petrol Sedan</th>
+    </tr>
+    <tr>
+      <td>Operating Years</td>
+      <td>5</td>
+      <td>5</td>    
+    </tr>
+    <tr>
+        <td>Per Km Cost (₹)</td>
+      <td>0.795 (₹ 6 per unit)</td>
+      <td>6.25 (₹ 75 per litre & 12 kmpl mileage)</td>
+    </tr>
+    <tr>
+        <td>Maintainance & Servicing (₹)</td>    
+      <td>25,000</td>
+      <td>40,000</td>
+    </tr>
+    <tr>
+        <td>Parts : Repairs/Replacements (₹)</td>    
+      <td>60,000</td>
+      <td>20,000</td>
+    </tr> 
+  </table>
+</div>
+
+  <script type="text/Javascript">
+
+    var vehicleBatteryEnergyDensity = 18.55;
+    var rangeOfVehicle = 140;
+    
+    var annualDrivingDistance = 15000;
+    var electricityCost = 6;
+    var petrolCost = 75;
+    
+    var maintainanceCostElectric = 25000;
+    var maintainanceCostPetrol = 40000;
+    
+    var partsCostElectric = 60000;
+    var partsCostPetrol = 20000;
+    
+    var totalElectricityCost = 59625;
+    var totalPetrolCost = 468750;
+    
+    var savingsStatementObj = document.getElementById("savingsStatement");
+    savingsStatementObj.innerHTML = "Mahindra eVerito will save you ₹ " + (totalPetrolCost - totalElectricityCost) + " in 5 years compared to a similar petrol sedan.";
+
+
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawStacked);
+    
+    function drawStacked() {
+     
+          var data = google.visualization.arrayToDataTable([
+            ['Vehicle', 'Maintainance', 'Parts Repair/Replacement', 'Fuel Cost', { role: 'annotation' }],
+            ['Mahindra eVerito', maintainanceCostElectric, partsCostElectric, totalElectricityCost, totalElectricityCost],
+            ['Petrol Sedan', maintainanceCostPetrol, partsCostPetrol, totalPetrolCost, totalPetrolCost]
+          ]);
+    
+          var options = {
+            title: '',
+            chartArea: {width: '80%'},
+            isStacked: true,
+            legend: { position: 'top', maxLines: 3 },
+            hAxis: {
+              title: 'Total Cost of Ownership (₹)',
+              minValue: 0,
+            },
+            annotations: {
+                textStyle: {
+                    fontSize: 11
+                }
+            },            
+            vAxis: {
+              title: ''
+            },
+            colors: ['#8547FF', '#51CCCA', '#921A20']        
+          };
+          var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+          chart.draw(data, options);
+    }
+    
+    var slider = document.getElementById("myRange");
+    slider.oninput = function() {
+      alert('ddd');
+      annualDrivingDistance =  this.value;
+      electricityCost = document.getElementById("electricity").value;
+      petrolCost = document.getElementById("petrol").value;
+      
+      var annualKm = document.getElementById("annualkm");
+      annualKm.innerHTML = annualDrivingDistance.toString(2);
+      console.log(annualDrivingDistance.toString() + ':' + electricityCost.toString() + ':' + petrolCost.toString()); 
+    
+      if (isNaN(Number(annualDrivingDistance)) || isNaN(Number(electricityCost)) || isNaN(Number(petrolCost))) {
+        // ... Exception it is NOT a number
+    
+      } else {
+        console.log('Here');       
+        // ... Do something you have a number
+        var perKmCostOfElectric = ((vehicleBatteryEnergyDensity / rangeOfVehicle) * electricityCost);
+        var totalDistance = annualDrivingDistance * 5;  //5 years
+        totalElectricityCost = totalDistance * perKmCostOfElectric;
+    
+        var perKmCostOfPetrol = petrolCost / 12;  //12 kmpl  
+        totalPetrolCost = totalDistance * perKmCostOfPetrol;
+        console.log(totalElectricityCost.toString() + ':' + totalPetrolCost.toString());         
+
+        drawStacked();
+
+        savingsStatementObj.innerHTML = "Mahindra eVerito will save you ₹ " + (totalPetrolCost - totalElectricityCost) + " in 5 years compared to a similar petrol sedan.";
+      }  
+    }
+    
+    function myFunction() {
+        drawStacked();
+    }
+    
+    </script>
+</body>
+</html>
